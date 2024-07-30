@@ -1,12 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
-import { User } from 'src/user/entities/user.entity';
-import { Movie } from 'src/movies/entities/movie.entity';
 import { Comment } from 'src/comments/entities/comment.entity';
+import { Movie } from 'src/movies/entities/movie.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Review {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   text: string;
@@ -22,4 +22,7 @@ export class Review {
 
   @OneToMany(() => Comment, (comment) => comment.review)
   comments: Comment[];
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 }

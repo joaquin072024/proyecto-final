@@ -21,11 +21,11 @@ export class AuthService {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    return this.userService.create({ name, email, passwordHash: hashPassword });
+    return await this.userService.create({ name, email, passwordHash: hashPassword });
   }
 
   async login({ email, password }: LoginDto) {
-    const user = await this.userService.findOneByEmail(email);
+    const user = await this.userService.findByEmailWithPass(email);
 
     if (!user) {
       throw new UnauthorizedException('El email no es correcto');
@@ -42,5 +42,9 @@ export class AuthService {
     const token = await this.jwtService.signAsync(payload);
 
     return { token, email };
+  }
+
+  async profile({ email, role }: { email: string; role: string }) {
+    return await this.userService.findOneByEmail(email);
   }
 }
