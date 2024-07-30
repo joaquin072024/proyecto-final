@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-
 import { Roles } from '../auth/decorators/roles.decoretor';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -7,6 +6,7 @@ import { Role } from '../common/enums/role.enum';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ReviewService } from './review.service';
+import { Review } from './entities/review.entity';
 
 @Controller('review')
 export class ReviewController {
@@ -19,18 +19,11 @@ export class ReviewController {
     return this.reviewService.create(createReviewDto);
   }
 
-  @Get()
+  @Get('movie/:id')
   @Roles(Role.Admin, Role.User)
   @UseGuards(AuthGuard, RolesGuard)
-  findAll() {
-    return this.reviewService.findAll();
-  }
-
-  @Get(':id')
-  @Roles(Role.Admin, Role.User)
-  @UseGuards(AuthGuard, RolesGuard)
-  findOne(@Param('id') id: string) {
-    return this.reviewService.findOne(id);
+  async getReviewByMovie(@Param('id') id: string): Promise<Review[]> {
+    return this.reviewService.getReviewByMovie(id);
   }
 
   @Patch(':id')

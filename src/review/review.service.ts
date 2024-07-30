@@ -13,12 +13,8 @@ export class ReviewService {
     return this.reviewRepository.save(createReviewDto);
   }
 
-  findAll() {
-    return this.reviewRepository.find();
-  }
-
-  findOne(id: string) {
-    return this.reviewRepository.findOne({ where: { id: id } });
+  async getReviewByMovie(id: string): Promise<Review[]> {
+    return this.reviewRepository.find({ where: { id } });
   }
 
   update(id: string, updateReviewDto: UpdateReviewDto) {

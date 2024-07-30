@@ -1,11 +1,11 @@
 import { Review } from 'src/review/entities/review.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, DeleteDateColumn } from 'typeorm';
 
 @Entity()
 export class Comment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   text: string;
@@ -15,4 +15,7 @@ export class Comment {
 
   @ManyToOne(() => Review, (review) => review.comments)
   review: Review;
+
+  @DeleteDateColumn()
+  delete_at: Date;
 }

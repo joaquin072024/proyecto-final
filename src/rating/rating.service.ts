@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Rating } from './entities/rating.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RatingService {
+  constructor(@InjectRepository(Rating) private readonly ratingRepository: Repository<Rating>) {}
+
   create(createRatingDto: CreateRatingDto) {
-    return 'This action adds a new rating';
+    return this.ratingRepository.save(createRatingDto);
   }
 
-  findAll() {
-    return `This action returns all rating`;
+  async getRatingsByMovie(id: string): Promise<Rating[]> {
+    return this.ratingRepository.find({ where: { id } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} rating`;
+  async update(id: string, updateRatingDto: UpdateRatingDto, userId: string) {
+    const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review'] });
+
+    if (!rating) {
+      throw new Error('Rating not found');
+    }
+
+    if (rating.user.id !== userId) {
+      throw new UnauthorizedException('You are not allowed to update this rating');
+    }
+
+    Object.assign(rating, updateRatingDto);
+    return this.ratingRepository.save(rating);
   }
 
-  update(id: number, updateRatingDto: UpdateRatingDto) {
-    return `This action updates a #${id} rating`;
-  }
+  async remove(id: string, userId: string) {
+    const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review'] });
 
-  remove(id: number) {
-    return `This action removes a #${id} rating`;
+    if (!rating) {
+      throw new Error('Rating not found');
+    }
+
+    if (rating.user.id !== userId) {
+      throw new UnauthorizedException('You are not allowed to delete this rating');
+    }
+
+    return this.ratingRepository.softDelete(id);
   }
 }

@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,7 @@ export class AuthController {
   @Get('profile')
   @Roles()
   @UseGuards(AuthGuard, RolesGuard)
-  profile(@Req() req: Request & { user: { email: string; role: string } }) {
+  profile(@Req() req: Request & { user: { email: string; role: string; id: string } }) {
     return this.authService.profile({ email: req.user.email, role: req.user.role });
   }
 }

@@ -1,24 +1,34 @@
+import { MovieGender } from 'src/movie_gender/entities/movie_gender.entity';
 import { Review } from 'src/review/entities/review.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, DeleteDateColumn } from 'typeorm';
 
 @Entity()
 export class Movie {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
+  @Column('text')
   title: string;
 
-  @Column()
-  genre: string;
+  @Column('int')
+  popularity: number;
 
-  @Column()
-  releaseYear: number;
+  @Column('int')
+  runtime: number;
 
-  @Column()
+  @Column('text')
+  release_date: string;
+
+  @Column('text')
   overview: string;
+
+  @OneToMany(() => MovieGender, (movieGender) => movieGender.movie)
+  movie_genders: MovieGender[];
 
   @OneToMany(() => Review, (review) => review.movie)
   reviews: Review[];
   ratings: any;
+
+  @DeleteDateColumn()
+  delete_at: Date;
 }
