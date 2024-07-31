@@ -51,7 +51,7 @@ export class AuthService {
     return { token, email };
   }
 
-  async profile({ email, role }: { email: string; role: string }) {
+  async profile({ email }: { email: string }) {
     return await this.userService.findOneByEmail(email);
   }
 }

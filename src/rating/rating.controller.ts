@@ -8,7 +8,10 @@ import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
 import { Rating } from './entities/rating.entity';
 import { RatingService } from './rating.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Ratings')
+@ApiBearerAuth()
 @Controller('rating')
 export class RatingController {
   constructor(private readonly ratingService: RatingService) {}

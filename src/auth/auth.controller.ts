@@ -6,7 +6,10 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Request } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -25,6 +28,6 @@ export class AuthController {
   @Roles()
   @UseGuards(AuthGuard, RolesGuard)
   profile(@Req() req: Request & { user: { email: string; role: string; id: string } }) {
-    return this.authService.profile({ email: req.user.email, role: req.user.role });
+    return this.authService.profile({ email: req.user.email });
   }
 }

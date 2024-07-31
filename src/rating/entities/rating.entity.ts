@@ -6,7 +6,7 @@ export class Rating {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('decimal', { precision: 2, scale: 1 })
+  @Column('float')
   rating: number;
 
   @OneToOne(() => Review, (review) => review.rating)

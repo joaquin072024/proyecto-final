@@ -1,34 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ComentsService } from './comments.service';
-import { CreateComentDto } from './dto/create-coment.dto';
-import { UpdateComentDto } from './dto/update-coment.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { CommentsService } from './comments.service';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Request } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('coments')
-export class ComentsController {
-  constructor(private readonly comentsService: ComentsService) {}
+@ApiTags('Comments')
+@ApiBearerAuth()
+@Controller('comments')
+export class CommentsController {
+  constructor(private readonly commentsService: CommentsService) {}
 
   @Post()
-  create(@Body() createComentDto: CreateComentDto) {
-    return this.comentsService.create(createComentDto);
+  @UseGuards()
+  create(@Body() createCommentDto: CreateCommentDto) {
+    return this.commentsService.create(createCommentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.comentsService.findAll();
+  @Get('movie/:movieId')
+  findAll(@Param('movieId') movieId: string) {
+    return this.commentsService.getCommentsByMovie(movieId);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.comentsService.findOne(+id);
+    return this.commentsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateComentDto: UpdateComentDto) {
-    return this.comentsService.update(+id, updateComentDto);
+  @UseGuards()
+  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto, @Req() req: Request) {
+    const userId = req.user.userId;
+    return this.commentsService.update(id, updateCommentDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.comentsService.remove(+id);
+  @UseGuards()
+  remove(@Param('id') id: string, @Req() req: Request) {
+    const userId = req.user.userId;
+    return this.commentsService.remove(id, userId);
   }
 }

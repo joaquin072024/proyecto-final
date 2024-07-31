@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { CreateComentDto } from './dto/create-coment.dto';
-import { UpdateComentDto } from './dto/update-coment.dto';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Comment } from './entities/comment.entity';
 
 @Injectable()
-export class ComentsService {
-  create(createComentDto: CreateComentDto) {
-    return 'This action adds a new coment';
+export class CommentsService {
+  constructor(@InjectRepository(Comment) private readonly commentRepository: Repository<Comment>) {}
+
+  async create(createCommentDto: CreateCommentDto) {
+    const comment = this.commentRepository.create(createCommentDto);
+    return this.commentRepository.save(comment);
   }
 
-  findAll() {
-    return `This action returns all coments`;
+  async getCommentsByMovie(movieId: string): Promise<Comment[]> {
+    const comments = await this.commentRepository.find({
+      where: { review: { movie: { id: movieId } } },
+      relations: ['review', 'review.movie'],
+    });
+    return comments;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} coment`;
+  findOne(id: string) {
+    return this.commentRepository.findOne({ where: { id: id } });
   }
 
-  update(id: number, updateComentDto: UpdateComentDto) {
-    return `This action updates a #${id} coment`;
+  async update(id: string, updateCommentDto: UpdateCommentDto, userId: string) {
+    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment.review.user.id !== userId) {
+      throw new UnauthorizedException('You are not allowed to update this comment');
+    }
+
+    Object.assign(comment, updateCommentDto);
+    return this.commentRepository.save(comment);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} coment`;
+  async remove(id: string, userId: string) {
+    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['user'] });
+
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment.review.user.id !== userId) {
+      throw new UnauthorizedException('You are not allowed to delete this comment');
+    }
+
+    await this.commentRepository.softDelete(id);
+    return { message: 'Comment deleted successfully' };
   }
 }

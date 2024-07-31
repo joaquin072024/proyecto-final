@@ -40,6 +40,10 @@ export class MoviesService {
     return this.movieRepository.findOne({ where: { title: title } });
   }
 
+  findOneById(id: string) {
+    return this.movieRepository.findOne({ where: { id: id } });
+  }
+
   update(id: string, updateMovieDto: UpdateMovieDto) {
     return this.movieRepository.update({ id: id }, updateMovieDto);
   }

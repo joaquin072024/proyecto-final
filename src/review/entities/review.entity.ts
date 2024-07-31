@@ -9,10 +9,10 @@ export class Review {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { cascade: true })
   user: User;
 
-  @ManyToOne(() => Movie, (movie) => movie.reviews)
+  @ManyToOne(() => Movie, (movie) => movie.reviews, { cascade: true })
   movie: Movie;
 
   @OneToOne(() => Rating, (rating) => rating.review, { cascade: true })

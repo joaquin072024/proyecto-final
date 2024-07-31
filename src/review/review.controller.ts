@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decoretor';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -7,7 +7,11 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { Review } from './entities/review.entity';
 import { ReviewService } from './review.service';
+import { Request } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Reviews')
+@ApiBearerAuth()
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
@@ -15,11 +19,12 @@ export class ReviewController {
   @Post()
   @Roles(Role.Admin, Role.User)
   @UseGuards(AuthGuard, RolesGuard)
-  createReview(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+  createReview(@Body() createReviewDto: CreateReviewDto, @Req() req: Request) {
+    const userId = req.user.userId;
+    return this.reviewService.create(createReviewDto, userId);
   }
 
-  @Get('movie/:id')
+  @Get('movie')
   async getReviewByMovie(@Param('id') id: string): Promise<Review[]> {
     return this.reviewService.getReviewByMovie(id);
   }
