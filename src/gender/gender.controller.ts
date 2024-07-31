@@ -3,9 +3,11 @@ import { GenderService } from './gender.service';
 import { CreateGenderDto } from './dto/create-gender.dto';
 import { UpdateGenderDto } from './dto/update-gender.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Gender } from './entities/gender.entity';
+import { Movie } from 'src/movies/entities/movie.entity';
 
 @ApiTags('Gender')
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('gender')
 export class GenderController {
   constructor(private readonly genderService: GenderService) {}
@@ -15,10 +17,15 @@ export class GenderController {
     return this.genderService.create(createGenderDto);
   }
 
-  @Get()
-  findAll() {
+  @Get("/movies")
+  async findAll(): Promise<{gender: Gender, movies: Movie[]} []>  {
     return this.genderService.findAll();
   }
+
+  // @Get("gender/movies")
+  // findGender() {
+  //   return this.genderService.findAll();
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

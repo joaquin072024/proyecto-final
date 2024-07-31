@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORM } from './config/typeORM';
 import { MovieGenderModule } from './movie_gender/movie_gender.module';
+import { GenderModule } from './gender/gender.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MovieGenderModule } from './movie_gender/movie_gender.module';
     MoviesModule,
     AuthModule,
     MovieGenderModule,
+    GenderModule
   ],
   controllers: [AppController],
   providers: [AppService],

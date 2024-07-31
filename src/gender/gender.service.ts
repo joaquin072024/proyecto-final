@@ -4,6 +4,7 @@ import { UpdateGenderDto } from './dto/update-gender.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Gender } from './entities/gender.entity';
 import { Repository } from 'typeorm';
+import { Movie } from 'src/movies/entities/movie.entity';
 
 @Injectable()
 export class GenderService {
@@ -13,8 +14,30 @@ export class GenderService {
     return this.genderRepository.save(createGenderDto);
   }
 
-  findAll() {
-    return this.genderRepository.find({ order: { gender: 'ASC' } });
+  async findAll(): Promise<{gender: Gender, movies: Movie[]} []> {
+    const gender = await this.genderRepository.find({ 
+      order: { gender: 'ASC' }, 
+      relations: ['movieGenders','movieGenders.movie'],
+      // select: {
+      //   id: true,
+      //   gender: true,
+      //   movieGenders: {
+      //     movie: {
+      //       id: true,
+      //       title: true
+      //     }
+      //   }
+      // }
+    });
+    console.log(gender);
+    
+    return gender.map((gender) => ({
+      gender,
+      movies: gender.movieGenders.map(movieGender => {
+        console.log(movieGender);
+        return movieGender.movie;
+      })
+    }))
   }
 
   findOne(id: string) {

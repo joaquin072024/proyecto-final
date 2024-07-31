@@ -912,6 +912,119 @@
           }
         ]
       }
+    },
+    "/gender": {
+      "post": {
+        "operationId": "GenderController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGenderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gender"
+        ]
+      }
+    },
+    "/gender/movies": {
+      "get": {
+        "operationId": "GenderController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gender"
+        ]
+      }
+    },
+    "/gender/{id}": {
+      "get": {
+        "operationId": "GenderController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gender"
+        ]
+      },
+      "patch": {
+        "operationId": "GenderController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGenderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gender"
+        ]
+      },
+      "delete": {
+        "operationId": "GenderController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gender"
+        ]
+      }
     }
   },
   "info": {
@@ -984,6 +1097,14 @@
         "properties": {}
       },
       "UpdateMovieGenderDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateGenderDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateGenderDto": {
         "type": "object",
         "properties": {}
       }

@@ -8,7 +8,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Gender])],
-  controllers: [GenderController, RolesGuard, AuthGuard],
+  controllers: [GenderController],
   providers: [GenderService],
 })
 export class GenderModule {}

@@ -19,6 +19,7 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors();
   const options = new DocumentBuilder()
     .setTitle('Proyecto Final')
     .setDescription('proyecto final')
@@ -29,6 +30,6 @@ async function bootstrap() {
 
   fs.writeFileSync('swagger-config.json', JSON.stringify(document, null, 2));
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();
