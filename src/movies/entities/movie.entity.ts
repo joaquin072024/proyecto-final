@@ -1,6 +1,6 @@
-import { MovieGender } from 'src/movie_gender/entities/movie_gender.entity';
 import { Review } from 'src/review/entities/review.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, DeleteDateColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { MovieGender } from '../../movie_gender/entities/movie_gender.entity';
 
 @Entity()
 export class Movie {
@@ -22,12 +22,11 @@ export class Movie {
   @Column('text')
   overview: string;
 
-  @OneToMany(() => MovieGender, (movieGender) => movieGender.movie)
-  movie_genders: MovieGender[];
-
   @OneToMany(() => Review, (review) => review.movie)
   reviews: Review[];
-  ratings: any;
+
+  @OneToMany(() => MovieGender, (movieGender) => movieGender.movie, { eager: true })
+  movieGenders: MovieGender[];
 
   @DeleteDateColumn()
   delete_at: Date;

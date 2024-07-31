@@ -13,8 +13,13 @@ export class UserService {
     return await this.userRepository.save(createUserDto);
   }
 
-  findOneByEmail(email: string) {
-    return this.userRepository.findOneBy({ email });
+  async findOneByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+        delete_at: null,
+      },
+    });
   }
 
   findByEmailWithPass(email: string) {

@@ -10,7 +10,7 @@ export class Gender {
   gender: string;
 
   @OneToMany(() => MovieGender, (movieGender) => movieGender.gender)
-  movie_genders: MovieGender[];
+  movieGenders: MovieGender[];
 
   @DeleteDateColumn()
   delete_at: Date;

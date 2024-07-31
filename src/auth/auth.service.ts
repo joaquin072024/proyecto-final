@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
@@ -13,15 +13,22 @@ export class AuthService {
   ) {}
 
   async register({ name, email, password }: RegisterDto) {
-    const user = await this.userService.findOneByEmail(email);
+    try {
+      const existingUser = await this.userService.findOneByEmail(email);
 
-    if (user) {
-      throw new BadRequestException('El usuario ya existe');
+      if (existingUser) {
+        if (existingUser.delete_at) {
+          throw new BadRequestException('El correo electrónico no se puede utilizar');
+        }
+        throw new BadRequestException('El usuario ya existe');
+      }
+
+      const hashPassword = await bcrypt.hash(password, 10);
+
+      return await this.userService.create({ name, email, passwordHash: hashPassword });
+    } catch (error) {
+      throw new InternalServerErrorException('Error al registrar el usuario');
     }
-
-    const hashPassword = await bcrypt.hash(password, 10);
-
-    return await this.userService.create({ name, email, passwordHash: hashPassword });
   }
 
   async login({ email, password }: LoginDto) {

@@ -1,17 +1,16 @@
 import { Gender } from 'src/gender/entities/gender.entity';
 import { Movie } from 'src/movies/entities/movie.entity';
-import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class MovieGender {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Movie, (movie) => movie.movie_genders)
+  @ManyToOne(() => Movie, (movie) => movie.movieGenders)
   movie: Movie;
 
-  @Column('text')
-  @ManyToOne(() => Gender, (gender) => gender.movie_genders)
+  @ManyToOne(() => Gender, (gender) => gender.movieGenders, { eager: true })
   gender: Gender;
 
   @DeleteDateColumn()

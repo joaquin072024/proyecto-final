@@ -2,18 +2,12 @@ import { Comment } from 'src/comments/entities/comment.entity';
 import { Movie } from 'src/movies/entities/movie.entity';
 import { Rating } from 'src/rating/entities/rating.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Review {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  text: string;
-
-  @Column('decimal', { precision: 2, scale: 1 })
-  rating: number;
 
   @ManyToOne(() => User, (user) => user.reviews)
   user: User;
@@ -21,11 +15,13 @@ export class Review {
   @ManyToOne(() => Movie, (movie) => movie.reviews)
   movie: Movie;
 
-  @OneToMany(() => Comment, (comment) => comment.review, { onDelete: 'CASCADE' })
-  comments: Comment[];
+  @OneToOne(() => Rating, (rating) => rating.review, { cascade: true })
+  @JoinColumn()
+  rating: Rating;
 
-  @OneToMany(() => Rating, (rating) => rating.review, { onDelete: 'CASCADE' })
-  ratings: Rating[];
+  @OneToOne(() => Comment, (comment) => comment.review, { cascade: true })
+  @JoinColumn()
+  comment: Comment;
 
   @DeleteDateColumn()
   deleted_at: Date;

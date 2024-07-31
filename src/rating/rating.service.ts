@@ -1,30 +1,35 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { UpdateRatingDto } from './dto/update-rating.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Rating } from './entities/rating.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class RatingService {
   constructor(@InjectRepository(Rating) private readonly ratingRepository: Repository<Rating>) {}
 
-  create(createRatingDto: CreateRatingDto) {
-    return this.ratingRepository.save(createRatingDto);
+  async create(createRatingDto: CreateRatingDto) {
+    const rating = this.ratingRepository.create(createRatingDto);
+    return this.ratingRepository.save(rating);
   }
 
-  async getRatingsByMovie(id: string): Promise<Rating[]> {
-    return this.ratingRepository.find({ where: { id } });
+  async getRatingsByMovie(movieId: string): Promise<Rating[]> {
+    const ratings = await this.ratingRepository.find({
+      where: { review: { movie: { id: movieId } } },
+      relations: ['review', 'review.movie'],
+    });
+    return ratings;
   }
 
   async update(id: string, updateRatingDto: UpdateRatingDto, userId: string) {
-    const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review'] });
+    const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
 
     if (!rating) {
-      throw new Error('Rating not found');
+      throw new NotFoundException('Rating not found');
     }
 
-    if (rating.user.id !== userId) {
+    if (rating.review.user.id !== userId) {
       throw new UnauthorizedException('You are not allowed to update this rating');
     }
 
@@ -33,16 +38,17 @@ export class RatingService {
   }
 
   async remove(id: string, userId: string) {
-    const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review'] });
+    const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
 
     if (!rating) {
-      throw new Error('Rating not found');
+      throw new NotFoundException('Rating not found');
     }
 
-    if (rating.user.id !== userId) {
+    if (rating.review.user.id !== userId) {
       throw new UnauthorizedException('You are not allowed to delete this rating');
     }
 
-    return this.ratingRepository.softDelete(id);
+    await this.ratingRepository.softDelete(id);
+    return { message: 'Rating deleted successfully' };
   }
 }
