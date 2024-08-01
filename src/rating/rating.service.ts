@@ -26,11 +26,11 @@ export class RatingService {
     const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
 
     if (!rating) {
-      throw new NotFoundException('Rating not found');
+      throw new NotFoundException('No hay rating');
     }
 
     if (rating.review.user.id !== userId) {
-      throw new UnauthorizedException('You are not allowed to update this rating');
+      throw new UnauthorizedException('No podes actualizar el rating');
     }
 
     Object.assign(rating, updateRatingDto);
@@ -41,14 +41,14 @@ export class RatingService {
     const rating = await this.ratingRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
 
     if (!rating) {
-      throw new NotFoundException('Rating not found');
+      throw new NotFoundException('No hay rating');
     }
 
     if (rating.review.user.id !== userId) {
-      throw new UnauthorizedException('You are not allowed to delete this rating');
+      throw new UnauthorizedException('No podes borrar el rating');
     }
 
     await this.ratingRepository.softDelete(id);
-    return { message: 'Rating deleted successfully' };
+    return { message: 'Borraste el rating' };
   }
 }

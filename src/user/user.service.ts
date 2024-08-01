@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -41,7 +41,25 @@ export class UserService {
     return this.userRepository.update({ id: id }, updateUserDto);
   }
 
-  remove(id: string) {
-    return this.userRepository.softDelete({ id: id });
+  async remove(id: string) {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+
+    if (!user) {
+      throw new NotFoundException('No se encontró el usuario');
+    }
+
+    await this.userRepository.softDelete({ id: id });
+    return { message: 'Usuario Borrado' };
+  }
+
+  async restore(id: string) {
+    const user = await this.userRepository.findOne({ where: { id }, withDeleted: true });
+
+    if (!user) {
+      throw new NotFoundException('No se encontró el usuario');
+    }
+
+    await this.userRepository.restore(id);
+    return { message: 'Usuario restaurado' };
   }
 }

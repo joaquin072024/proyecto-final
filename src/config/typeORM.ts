@@ -6,7 +6,7 @@ export const typeORM = (): TypeOrmModuleOptions => {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: 'bootcamp122024',
+    password: 'Tu.vieja123',
     database: 'db_proyecto_final',
     entities: ['dist/**/*.entity.{ts,js}'],
     synchronize: true,

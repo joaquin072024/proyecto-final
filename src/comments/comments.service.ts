@@ -30,11 +30,11 @@ export class CommentsService {
     const comment = await this.commentRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
 
     if (!comment) {
-      throw new NotFoundException('Comment not found');
+      throw new NotFoundException('No hay comentario');
     }
 
     if (comment.review.user.id !== userId) {
-      throw new UnauthorizedException('You are not allowed to update this comment');
+      throw new UnauthorizedException('No podes actualizar el comentario');
     }
 
     Object.assign(comment, updateCommentDto);
@@ -42,17 +42,17 @@ export class CommentsService {
   }
 
   async remove(id: string, userId: string) {
-    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['user'] });
+    const comment = await this.commentRepository.findOne({ where: { id }, relations: ['review', 'review.user'] });
 
     if (!comment) {
-      throw new NotFoundException('Comment not found');
+      throw new NotFoundException('No hay comentario');
     }
 
     if (comment.review.user.id !== userId) {
-      throw new UnauthorizedException('You are not allowed to delete this comment');
+      throw new UnauthorizedException('No podes borrar el comentario');
     }
 
     await this.commentRepository.softDelete(id);
-    return { message: 'Comment deleted successfully' };
+    return { message: 'Borraste el comentario' };
   }
 }

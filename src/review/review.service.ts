@@ -1,13 +1,13 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Comment } from 'src/comments/entities/comment.entity';
+import { Movie } from 'src/movies/entities/movie.entity';
+import { Rating } from 'src/rating/entities/rating.entity';
+import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { Review } from './entities/review.entity';
-import { Movie } from 'src/movies/entities/movie.entity';
-import { Rating } from 'src/rating/entities/rating.entity';
-import { User } from 'src/user/entities/user.entity';
-import { Comment } from 'src/comments/entities/comment.entity';
 
 @Injectable()
 export class ReviewService {
@@ -30,25 +30,25 @@ export class ReviewService {
     try {
       const movie = await this.movieRepository.findOne({ where: { id: movieId } });
       if (!movie) {
-        throw new NotFoundException(`Movie with ID ${movieId} not found`);
+        throw new NotFoundException('No existe la peli');
       }
 
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
-        throw new NotFoundException(`User with ID ${userId} not found`);
+        throw new NotFoundException('No existe ese usuario');
       }
 
       const ratingEntity = this.ratingRepository.create({ rating });
       await this.ratingRepository.save(ratingEntity);
 
-      const commentEntity = this.commentRepository.create({ text: commentText } as unknown as Comment);
+      const commentEntity = this.commentRepository.create({ text: commentText });
       await this.commentRepository.save(commentEntity);
 
       const review = this.reviewRepository.create({
         user,
         movie,
         rating: ratingEntity,
-        comment: commentEntity,
+        commentText: commentEntity,
       } as unknown as Review);
 
       return await this.reviewRepository.save(review);
@@ -56,7 +56,7 @@ export class ReviewService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException('An error occurred while creating the review');
+      throw new InternalServerErrorException('Paso algo');
     }
   }
 
@@ -68,7 +68,18 @@ export class ReviewService {
     return this.reviewRepository.update({ id: id }, updateReviewDto as unknown as Review);
   }
 
-  remove(id: string) {
-    return this.reviewRepository.softDelete({ id: id });
+  async remove(id: string, userId: string) {
+    const review = await this.reviewRepository.findOne({ where: { id }, relations: ['user'] });
+
+    if (!review) {
+      throw new NotFoundException('No se encontró la reseña');
+    }
+
+    if (review.user.id !== userId) {
+      throw new UnauthorizedException('No tienes permiso para eliminar esta reseña');
+    }
+
+    await this.reviewRepository.softDelete(id);
+    return { message: 'Borraste la reseña' };
   }
 }

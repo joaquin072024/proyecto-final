@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decoretor';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -6,7 +7,6 @@ import { Role } from '../common/enums/role.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Usuarios')
 @ApiBearerAuth()
@@ -43,5 +43,12 @@ export class UserController {
   @UseGuards(AuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
+  }
+
+  @Post(':id/restore')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  restore(@Param('id') id: string) {
+    return this.userService.restore(id);
   }
 }
