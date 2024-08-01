@@ -609,6 +609,34 @@
         ]
       }
     },
+    "/movies/year/{year}": {
+      "get": {
+        "operationId": "MoviesController_findMoviesByYear",
+        "parameters": [
+          {
+            "name": "year",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Movies"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/movies/{id}": {
       "get": {
         "operationId": "MoviesController_findOneMovie",
@@ -962,6 +990,11 @@
         },
         "tags": [
           "Gender"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ]
       }
     },
@@ -976,12 +1009,17 @@
         },
         "tags": [
           "Gender"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ]
       }
     },
-    "/gender/{id}": {
+    "/gender/{id}/movies": {
       "get": {
-        "operationId": "GenderController_findOne",
+        "operationId": "GenderController_findMoviesByGender",
         "parameters": [
           {
             "name": "id",
@@ -999,8 +1037,15 @@
         },
         "tags": [
           "Gender"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ]
-      },
+      }
+    },
+    "/gender/{id}": {
       "patch": {
         "operationId": "GenderController_update",
         "parameters": [
@@ -1030,6 +1075,11 @@
         },
         "tags": [
           "Gender"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ]
       },
       "delete": {
@@ -1051,6 +1101,11 @@
         },
         "tags": [
           "Gender"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
         ]
       }
     },

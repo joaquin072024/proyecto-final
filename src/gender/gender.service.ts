@@ -8,40 +8,40 @@ import { Movie } from 'src/movies/entities/movie.entity';
 
 @Injectable()
 export class GenderService {
-  constructor(@InjectRepository(Gender) private readonly genderRepository: Repository<Gender>) {}
+  constructor(
+    @InjectRepository(Gender) private readonly genderRepository: Repository<Gender>,
+    @InjectRepository(Movie)
+    private readonly movieRepository: Repository<Movie>,
+  ) {}
 
   create(createGenderDto: CreateGenderDto) {
     return this.genderRepository.save(createGenderDto);
   }
 
-  async findAll(): Promise<{gender: Gender, movies: Movie[]} []> {
-    const gender = await this.genderRepository.find({ 
-      order: { gender: 'ASC' }, 
-      relations: ['movieGenders','movieGenders.movie'],
-      // select: {
-      //   id: true,
-      //   gender: true,
-      //   movieGenders: {
-      //     movie: {
-      //       id: true,
-      //       title: true
-      //     }
-      //   }
-      // }
+  async findAll(): Promise<{ gender: Gender; movies: Movie[] }[]> {
+    const genders = await this.genderRepository.find({
+      order: { gender: 'ASC' },
+      relations: ['movieGenders', 'movieGenders.movie'],
     });
-    console.log(gender);
-    
-    return gender.map((gender) => ({
-      gender,
-      movies: gender.movieGenders.map(movieGender => {
-        console.log(movieGender);
-        return movieGender.movie;
-      })
-    }))
+
+    return genders.map((gender) => {
+      const movies = gender.movieGenders ? gender.movieGenders.map((movieGender) => movieGender.movie) : [];
+      return {
+        gender,
+        movies,
+      };
+    });
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} gender`;
+  async findMoviesByGender(genderId: string): Promise<{ movies: Movie[] }> {
+    const gender = await this.genderRepository.findOne({
+      where: { id: genderId },
+      relations: ['movieGenders', 'movieGenders.movie'],
+    });
+
+    const movies = gender.movieGenders.map((movieGender) => movieGender.movie);
+
+    return { movies };
   }
 
   update(id: string, updateGenderDto: UpdateGenderDto) {

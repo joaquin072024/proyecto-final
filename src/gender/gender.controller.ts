@@ -7,7 +7,7 @@ import { Gender } from './entities/gender.entity';
 import { Movie } from 'src/movies/entities/movie.entity';
 
 @ApiTags('Gender')
-// @ApiBearerAuth()
+@ApiBearerAuth()
 @Controller('gender')
 export class GenderController {
   constructor(private readonly genderService: GenderService) {}
@@ -17,19 +17,14 @@ export class GenderController {
     return this.genderService.create(createGenderDto);
   }
 
-  @Get("/movies")
-  async findAll(): Promise<{gender: Gender, movies: Movie[]} []>  {
+  @Get('/movies')
+  async findAll(): Promise<{ gender: Gender; movies: Movie[] }[]> {
     return this.genderService.findAll();
   }
 
-  // @Get("gender/movies")
-  // findGender() {
-  //   return this.genderService.findAll();
-  // }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.genderService.findOne(id);
+  @Get('/:id/movies')
+  async findMoviesByGender(@Param('id') id: string): Promise<{ movies: Movie[] }> {
+    return this.genderService.findMoviesByGender(id);
   }
 
   @Patch(':id')

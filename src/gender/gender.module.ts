@@ -3,11 +3,10 @@ import { GenderService } from './gender.service';
 import { GenderController } from './gender.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Gender } from './entities/gender.entity';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Movie } from 'src/movies/entities/movie.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Gender])],
+  imports: [TypeOrmModule.forFeature([Gender, Movie])],
   controllers: [GenderController],
   providers: [GenderService],
 })

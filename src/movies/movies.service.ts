@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './entities/movie.entity';
@@ -34,6 +34,24 @@ export class MoviesService {
     }
 
     return query.getMany();
+  }
+
+  async findMoviesByYear(year: string): Promise<{ movies: Movie[] }> {
+    const yearNumber = parseInt(year, 10);
+    if (isNaN(yearNumber)) {
+      throw new Error('Invalid year format');
+    }
+
+    const movies = await this.movieRepository.find({
+      where: {
+        release_date: Between(
+          new Date(`${yearNumber}-01-01`).toISOString(),
+          new Date(`${yearNumber}-12-31`).toISOString(),
+        ),
+      },
+    });
+
+    return { movies };
   }
 
   findOne(id: string) {

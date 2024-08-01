@@ -24,6 +24,11 @@ export class MoviesController {
     return this.moviesService.getMovies({ title, release_date, gender });
   }
 
+  @Get('/year/:year')
+  async findMoviesByYear(@Param('year') year: string): Promise<{ movies: Movie[] }> {
+    return this.moviesService.findMoviesByYear(year);
+  }
+
   @Get(':id')
   findOneMovie(@Param('id') id: string) {
     return this.moviesService.findOne(id);
