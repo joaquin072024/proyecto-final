@@ -33,6 +33,15 @@ export class GenderService {
     });
   }
 
+  async getMovies(filters: { title?: string }): Promise<Gender[]> {
+    const query = this.genderRepository.createQueryBuilder('movie');
+
+    if (filters.title) {
+      query.andWhere('movie.title ILIKE :title', { title: `%${filters.title}%` });
+    }
+    return query.getMany();
+  }
+
   async findMoviesByGender(genderId: string): Promise<{ movies: Movie[] }> {
     const gender = await this.genderRepository.findOne({
       where: { id: genderId },

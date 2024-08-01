@@ -34,6 +34,11 @@ export class MoviesController {
     return this.moviesService.findOne(id);
   }
 
+  @Get('movie-title')
+  async findOneMovieTitle(@Query('title') title?: string) {
+    return this.moviesService.findOneMovieTitle(title);
+  }
+
   @Post()
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)

@@ -17,7 +17,7 @@ export class MoviesService {
     const query = this.movieRepository.createQueryBuilder('movie');
 
     if (filters.title) {
-      query.andWhere('movie.title LIKE :title', { title: `%${filters.title}%` });
+      query.andWhere('movie.title ILIKE :title', { title: `%${filters.title}%` });
     }
 
     if (filters.release_date) {
@@ -52,6 +52,13 @@ export class MoviesService {
     });
 
     return { movies };
+  }
+
+  async findOneMovieTitle(title: string): Promise<Movie | undefined> {
+    return this.movieRepository
+      .createQueryBuilder('movie')
+      .where('movie.title ILIKE :title', { title: `%${title}%` })
+      .getOne();
   }
 
   findOne(id: string) {

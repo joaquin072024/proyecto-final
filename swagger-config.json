@@ -727,6 +727,34 @@
         ]
       }
     },
+    "/movies/movie-title": {
+      "get": {
+        "operationId": "MoviesController_findOneMovieTitle",
+        "parameters": [
+          {
+            "name": "title",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Movies"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/movies": {
       "post": {
         "operationId": "MoviesController_createMovie",
@@ -1002,6 +1030,34 @@
       "get": {
         "operationId": "GenderController_findAll",
         "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gender"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/gender/filters": {
+      "get": {
+        "operationId": "GenderController_getMovies",
+        "parameters": [
+          {
+            "name": "title",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""

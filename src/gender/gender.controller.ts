@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { GenderService } from './gender.service';
 import { CreateGenderDto } from './dto/create-gender.dto';
 import { UpdateGenderDto } from './dto/update-gender.dto';
@@ -20,6 +20,11 @@ export class GenderController {
   @Get('/movies')
   async findAll(): Promise<{ gender: Gender; movies: Movie[] }[]> {
     return this.genderService.findAll();
+  }
+
+  @Get('filters')
+  async getMovies(@Query('title') title?: string): Promise<Gender[]> {
+    return this.genderService.getMovies({ title });
   }
 
   @Get('/:id/movies')
