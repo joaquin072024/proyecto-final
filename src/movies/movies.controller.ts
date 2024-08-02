@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/decorators/roles.decoretor';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -7,7 +8,6 @@ import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './entities/movie.entity';
 import { MoviesService } from './movies.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Movies')
 @ApiBearerAuth()
@@ -32,11 +32,6 @@ export class MoviesController {
   @Get(':id')
   findOneMovie(@Param('id') id: string) {
     return this.moviesService.findOne(id);
-  }
-
-  @Get('movie-title')
-  async findOneMovieTitle(@Query('title') title?: string) {
-    return this.moviesService.findOneMovieTitle(title);
   }
 
   @Post()

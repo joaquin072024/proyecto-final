@@ -14,8 +14,7 @@ export class MoviesService {
   }
 
   async getMovies(filters: { title?: string; release_date?: string; gender?: string }): Promise<Movie[]> {
-    const query = this.movieRepository.createQueryBuilder('movie');
-
+    const query = this.movieRepository.createQueryBuilder('movie').leftJoinAndSelect('movie.photo', 'photo');
     if (filters.title) {
       query.andWhere('movie.title ILIKE :title', { title: `%${filters.title}%` });
     }
@@ -52,13 +51,6 @@ export class MoviesService {
     });
 
     return { movies };
-  }
-
-  async findOneMovieTitle(title: string): Promise<Movie | undefined> {
-    return this.movieRepository
-      .createQueryBuilder('movie')
-      .where('movie.title ILIKE :title', { title: `%${title}%` })
-      .getOne();
   }
 
   findOne(id: string) {
