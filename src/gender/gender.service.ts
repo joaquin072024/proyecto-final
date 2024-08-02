@@ -37,7 +37,7 @@ export class GenderService {
     const query = this.genderRepository.createQueryBuilder('movie');
 
     if (filters.title) {
-      query.andWhere('movie.title ILIKE :title', { title: `%${filters.title}%` });
+      query.andWhere('gender.movieGender.movie.title ILIKE :title', { title: `%${filters.title}%` });
     }
     return query.getMany();
   }

@@ -27,7 +27,7 @@ export class MoviesService {
     if (filters.gender) {
       const gender = parseInt(filters.gender, 10);
       if (isNaN(gender)) {
-        throw new BadRequestException('Invalid gender filter');
+        throw new BadRequestException('No hay tal genero');
       }
       query.andWhere('movie.gender = :gender', { gender });
     }
@@ -38,7 +38,7 @@ export class MoviesService {
   async findMoviesByYear(year: string): Promise<{ movies: Movie[] }> {
     const yearNumber = parseInt(year, 10);
     if (isNaN(yearNumber)) {
-      throw new Error('Invalid year format');
+      throw new Error('No hay tal año');
     }
 
     const movies = await this.movieRepository.find({

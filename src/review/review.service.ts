@@ -25,7 +25,7 @@ export class ReviewService {
   ) {}
 
   async create(createReviewDto: CreateReviewDto, userId: string): Promise<Review> {
-    const { movieId, rating, commentText } = createReviewDto;
+    const { movieId, rating, comment } = createReviewDto;
 
     try {
       const movie = await this.movieRepository.findOne({ where: { id: movieId } });
@@ -41,14 +41,14 @@ export class ReviewService {
       const ratingEntity = this.ratingRepository.create({ rating });
       await this.ratingRepository.save(ratingEntity);
 
-      const commentEntity = this.commentRepository.create({ text: commentText });
+      const commentEntity = this.commentRepository.create({ comment });
       await this.commentRepository.save(commentEntity);
 
       const review = this.reviewRepository.create({
         user,
         movie,
         rating: ratingEntity,
-        commentText: commentEntity,
+        comment: commentEntity,
       } as unknown as Review);
 
       return await this.reviewRepository.save(review);
@@ -60,8 +60,15 @@ export class ReviewService {
     }
   }
 
-  async getReviewByMovie(id: string): Promise<Review[]> {
-    return this.reviewRepository.find({ where: { id }, relations: { movie: true } });
+  // async getReviewByMovie(id: string): Promise<Review[]> {
+  //   return await this.reviewRepository.find({ where: { id }, relations: { movie: true } });
+  // }
+
+  async getReviewByMovie(movieId: string): Promise<Review[]> {
+    return this.reviewRepository.find({
+      where: { movie: { id: movieId } },
+      relations: ['movie', 'user', 'rating', 'comment'],
+    });
   }
 
   update(id: string, updateReviewDto: UpdateReviewDto) {

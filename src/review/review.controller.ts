@@ -24,7 +24,7 @@ export class ReviewController {
     return this.reviewService.create(createReviewDto, userId);
   }
 
-  @Get('movie')
+  @Get(':id')
   async getReviewByMovie(@Param('id') id: string): Promise<Review[]> {
     return this.reviewService.getReviewByMovie(id);
   }

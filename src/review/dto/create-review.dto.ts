@@ -1,4 +1,4 @@
-import { IsDecimal, IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class CreateReviewDto {
   @IsUUID()
@@ -7,9 +7,9 @@ export class CreateReviewDto {
   @IsUUID()
   userId: string;
 
-  @IsDecimal()
+  @IsNumber()
   rating: number;
 
   @IsString()
-  commentText: string;
+  comment: string;
 }

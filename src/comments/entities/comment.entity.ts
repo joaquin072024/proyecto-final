@@ -7,7 +7,7 @@ export class Comment {
   id: string;
 
   @Column()
-  text: string;
+  comment: string;
 
   @OneToOne(() => Review, (review) => review.comment)
   review: Review;
